@@ -1,3 +1,9 @@
+CHANGES:
+
+Supports payload-less actions:
+* https://github.com/aikoven/typescript-fsa/pull/82
+
+
 # TypeScript FSA [![npm version][npm-image]][npm-url] [![Build Status][travis-image]][travis-url]
 
 Action Creator library for TypeScript. Its goal is to provide type-safe experience with Flux actions with minimum boilerplate.
@@ -15,7 +21,7 @@ interface Action<Payload> {
 ## Installation
 
 ```
-npm install --save typescript-fsa
+npm install --save typescript-fsa-vanuan
 ```
 
 ## Usage
@@ -23,7 +29,7 @@ npm install --save typescript-fsa
 ### Basic
 
 ```ts
-import actionCreatorFactory from 'typescript-fsa';
+import actionCreatorFactory from 'typescript-fsa-vanuan';
 
 const actionCreator = actionCreatorFactory();
 
@@ -44,7 +50,7 @@ Async Action Creators are objects with properties `started`, `done` and
 `failed` whose values are action creators. There is a number of [Companion Packages](#companion-packages) that help with binding Async Action Creators to async processes.
 
 ```ts
-import actionCreatorFactory from 'typescript-fsa';
+import actionCreatorFactory from 'typescript-fsa-vanuan';
 
 const actionCreator = actionCreatorFactory();
 
