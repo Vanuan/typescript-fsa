@@ -1,6 +1,6 @@
 {
-  "name": "typescript-fsa",
-  "version": "3.0.0",
+  "name": "typescript-fsa-vanuan",
+  "version": "3.2.0",
   "description": "Type-safe action creator utilities",
   "keywords": [
     "redux",

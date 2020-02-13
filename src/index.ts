@@ -71,7 +71,7 @@ export interface ActionCreator<Payload> {
    * @param payload Action payload.
    * @param meta Action metadata. Merged with `commonMeta` of Action Creator.
    */
-  (...a: (Payload extends void ? []: never)): Action<void>;
+  (...a: ([Payload] extends [void] ? []: never)): Action<void>;
   (params: Payload, meta?: Meta): Action<Payload>;
 }
 
