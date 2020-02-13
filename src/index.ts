@@ -4,7 +4,7 @@ export interface AnyAction {
 
 export type Meta = null | {[key: string]: any};
 
-export type Action<Payload> = Payload extends void ? {
+export type Action<Payload> = Payload extends undefined ? {
   type: string;
   error?: boolean;
   meta?: Meta;
@@ -71,9 +71,9 @@ export interface ActionCreator<Payload> {
    * @param payload Action payload.
    * @param meta Action metadata. Merged with `commonMeta` of Action Creator.
    */
-  (...a: (Payload extends void 
-          ? [] | [undefined] | [undefined, Meta]
-          : [Payload] | [Payload, Meta])): Action<Payload>;
+  (...a: (Payload extends undefined 
+          ? []: never)): Action<undefined>;
+  (params: Payload, meta?: Meta): Action<Payload>;
 }
 
 type EmptyObject = {
@@ -81,35 +81,35 @@ type EmptyObject = {
 };
 
 export type Success<Params, Result> =
-  Params extends void
+  Params extends undefined
   ? (
-    Result extends void
+    Result extends undefined
     ? EmptyObject
     : {
       result: Result;
     }
   )
   : (
-    Result extends void ? {
+    Result extends undefined ? {
       params: Params;
-    }: {
-      params: Params;
-      result: Result;
-    }
-  )
+    }: never)
+  | {
+     params: Params;
+     result: Result;
+   }
 ;
 
 export type Failure<Params, Error> = (
-  Params extends void
+  Params extends undefined
   ? (
-    Error extends void
+    Error extends undefined
     ? EmptyObject
     : {
      error: Error;
     }
   )
   : (
-    Error extends void
+    Error extends undefined
     ? {
       params: Params;
     }: {
@@ -135,7 +135,7 @@ export interface ActionCreatorFactory {
    * @param commonMeta Metadata added to created actions.
    * @param isError Defines whether created actions are error actions.
    */
-  <Payload = void>(
+  <Payload = undefined>(
     type: string,
     commonMeta?: Meta,
     isError?: boolean,
@@ -149,7 +149,7 @@ export interface ActionCreatorFactory {
    * @param isError Function that detects whether action is error given the
    *   payload.
    */
-  <Payload = void>(
+  <Payload = undefined>(
     type: string,
     commonMeta?: Meta,
     isError?: (payload: Payload) => boolean,

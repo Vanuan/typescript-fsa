@@ -1,4 +1,4 @@
-import actionCreatorFactory, {isType, AnyAction, AsyncActionCreators, Success} from "typescript-fsa";
+import actionCreatorFactory, {isType, AnyAction, AsyncActionCreators, Success, ActionCreator} from "typescript-fsa";
 
 
 declare const action: AnyAction;
@@ -9,7 +9,7 @@ const actionCreator = actionCreatorFactory();
 function testPayload() {
   const withPayload = actionCreator<{foo: string}>('WITH_PAYLOAD');
   const withoutPayload = actionCreator('WITHOUT_PAYLOAD');
-  const withOrWithoutPayload = actionCreator<string | void>('WITH_ORWITHOUT_PAYLOAD')
+  const withOrWithoutPayload = actionCreator<string | undefined>('WITH_ORWITHOUT_PAYLOAD')
 
   // typings:expect-error
   const a = withPayload();
@@ -72,7 +72,7 @@ function testAsyncPayload() {
 }
 
 function testAsyncNoParams() {
-  const asyncNoParams = actionCreator.async<void,
+  const asyncNoParams = actionCreator.async<undefined,
                                             {bar: string},
                                             {baz: string}>('ASYNC_NO_PARAMS');
 
@@ -109,7 +109,7 @@ function testAsyncNoParams() {
 
 function testAsyncNoResult() {
   const asyncNoResult = actionCreator.async<{foo: string},
-                                            void,
+                                            undefined,
                                             {baz: string}>('ASYNC_NO_RESULT');
 
   const started = asyncNoResult.started({foo: 'foo'});
@@ -148,8 +148,8 @@ function testAsyncNoResult() {
 }
 
 function testAsyncNoParamsAndResult() {
-  const async = actionCreator.async<void,
-                                    void,
+  const async = actionCreator.async<undefined,
+                                    undefined,
                                     {baz: string}>('ASYNC');
 
   const started = async.started();
@@ -176,23 +176,27 @@ function testAsyncNoParamsAndResult() {
   });
 }
 
-function testAsyncGeneric<P, R>(...params: P extends void ? [] | [undefined] | [undefined, R] : [P] | [P, R]) {
+function testAsyncGeneric<P, R>(params: P, result: R) {
   const async = actionCreator.async<P, R>('ASYNC');
 
-  const started = async.started(...params);
+  if(params === undefined) {
+    const started = (async as AsyncActionCreators<unknown, R> as AsyncActionCreators<undefined, R>).started();
+  } else {
+    const started = (async).started(params);
+  }
 
   // typings:expect-error
   const started1 = async.started({});
   // typings:expect-error
   const started2 = async.started();
-/*
-  if(params.length == 2 && params[0] !== undefined && params[1] !== undefined) {
+
+  if(params !== undefined && result !== undefined) {
     const done = async.done({
-      params: params[0],
-      result: params[1],
-    });
+      params,
+      result,
+    } as Success<P, R>);
   }
-*/
+
   // typings:expect-error
   const done1 = async.done({
     params: {foo: 1},
