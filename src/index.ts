@@ -4,11 +4,7 @@ export interface AnyAction {
 
 export type Meta = null | {[key: string]: any};
 
-export type Action<Payload> = Payload extends void ? {
-  type: string;
-  error?: boolean;
-  meta?: Meta;
-} : {
+export type Action<Payload> = {
   type: string;
   payload: Payload;
   error?: boolean;
